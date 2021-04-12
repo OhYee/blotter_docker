@@ -1,0 +1,31 @@
+version: "3"
+services:
+  nginx:
+    image: nginx:1.19.9
+    cap_add:
+        - NET_ADMIN
+    ports: 
+        - 80:8000
+        - 443:8001
+    volumes: 
+        - ./conf.d/:/etc/nginx/conf.d/
+    links:
+        - backend:backend
+  mongodb:
+    image: mongo:4.4.5
+    volumes: 
+        - ./data:/data/db
+  backend:
+    image: blotter
+    environment: 
+        - mongoURI=mongodb:27017
+    depends_on:
+        - mongodb
+    links:
+        - mongodb:mongodb
+  frontend:
+    image: blotter_page
+    environment:
+        - backendURI=http://backend:50000
+    links:
+        - backend:backend
