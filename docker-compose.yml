@@ -1,31 +1,41 @@
 version: "3"
+
 services:
   nginx:
     image: nginx:1.19.9
-    cap_add:
-        - NET_ADMIN
     ports: 
-        - 80:8000
-        - 443:8001
+        - 50000:50000
+        - 80:80
+        - 443:443
     volumes: 
-        - ./conf.d/:/etc/nginx/conf.d/
+        - ./nginx/conf.d:/etc/nginx/conf.d
+        - ./nginx/ssl:/etc/nginx/ssl
+        - /etc/localtime:/etc/localtime
     links:
         - backend:backend
+        - frontend:frontend
   mongodb:
     image: mongo:4.4.5
     volumes: 
         - ./data:/data/db
+        - /etc/localtime:/etc/localtime
+    ports:
+        - 27017:27017
   backend:
-    image: blotter
+    image: ${backendImage}
     environment: 
         - mongoURI=mongodb:27017
     depends_on:
         - mongodb
+    volumes:
+        - /etc/localtime:/etc/localtime
     links:
         - mongodb:mongodb
   frontend:
-    image: blotter_page
+    image: ${frontImage}
     environment:
         - backendURI=http://backend:50000
+    volumes:
+        - /etc/localtime:/etc/localtime
     links:
         - backend:backend
