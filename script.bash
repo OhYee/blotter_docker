@@ -1,7 +1,7 @@
 #!/bin/bash
 
-export backendImage="ohyee/blotter:17fd430"
-export frontImage="ohyee/blotter_page:85575519f"
+export backendImage="ohyee/blotter:1.0.0"
+export frontImage="ohyee/blotter_page:1.0.0"
 
 func_check_docker() {
     DOCKER_PATH=$(which docker)
