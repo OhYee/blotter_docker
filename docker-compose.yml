@@ -2,6 +2,7 @@ version: "3"
 
 services:
   nginx:
+    container_name: nginx
     image: nginx:1.19.9
     ports: 
         - 50000:50000
@@ -15,6 +16,7 @@ services:
         - backend:backend
         - frontend:frontend
   mongodb:
+    container_name: mongodb
     image: mongo:4.4.5
     volumes: 
         - ./data:/data/db
@@ -22,6 +24,7 @@ services:
     ports:
         - 127.0.0.1:27017:27017
   backend:
+    container_name: backend
     image: ${backendImage}
     environment: 
         - mongoURI=mongodb:27017
@@ -31,7 +34,14 @@ services:
         - /etc/localtime:/etc/localtime
     links:
         - mongodb:mongodb
+    dns:
+        - 8.8.8.8
+        - 4.2.2.1
+        - 4.2.2.2
+        - 1.1.1.1
+        - 114.114.114.114
   frontend:
+    container_name: frontend
     image: ${frontImage}
     environment:
         - backendURI=http://backend:50000
