@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export backendImage="ohyee/blotter:1.4.1"
+export backendImage="ohyee/blotter:1.4.2"
 export frontImage="ohyee/blotter_page:1.4.0"
 
 func_check_docker() {
