@@ -1,7 +1,9 @@
 #!/bin/bash
 
-export backendImage="ohyee/blotter:1.5.1"
-export frontImage="ohyee/blotter_page:1.5.0"
+export backendImageTag="1.5.1"
+export frontendImageTag="1.5.1"
+export backendImage="ohyee/blotter:$backendImageTag"
+export frontendImage="ohyee/blotter_page:$frontendImageTag"
 
 func_check_docker() {
     DOCKER_PATH=$(which docker)
@@ -36,13 +38,21 @@ func_build_frontend() {
 func_pull() {
     echo "Pulling blotter"
     docker pull ${backendImage}
-    docker pull ${frontImage}
+    docker pull ${frontendImage}
 }
 
 func_push() {
     echo "Pushing blotter"
+
+    backendLatest="$(echo $backendImage | cut -d ":" -f 1):latest"
+    docker tag ${backendImage} ${backendLatest}
     docker push ${backendImage}
-    docker push ${frontImage}
+    docker push ${backendLatest}
+
+    frontendLatest="$(echo $frontendImage | cut -d ":" -f 1):latest"
+    docker tag ${frontendImage} ${frontendLatest}
+    docker push ${frontendImage}
+    docker push ${frontendLatest}
 }
 
 
