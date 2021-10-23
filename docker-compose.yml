@@ -42,7 +42,7 @@ services:
         - 114.114.114.114
   frontend:
     container_name: frontend
-    image: ${frontImage}
+    image: ${frontendImage}
     environment:
         - backendURI=http://backend:50000
     volumes:
