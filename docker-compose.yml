@@ -12,9 +12,11 @@ services:
         - ./nginx/conf.d:/etc/nginx/conf.d
         - ./nginx/ssl:/etc/nginx/ssl
         - /etc/localtime:/etc/localtime
-    links:
-        - backend:backend
-        - frontend:frontend
+    networks:
+        - net
+    depends_on:
+        - backend
+        - frontend
   mongodb:
     container_name: mongodb
     image: mongo:4.4.5
@@ -23,23 +25,26 @@ services:
         - /etc/localtime:/etc/localtime
     ports:
         - 127.0.0.1:27017:27017
+    networks:
+        - net
   backend:
     container_name: backend
     image: ${backendImage}
     environment: 
         - mongoURI=mongodb:27017
+        - GODEBUG=netdns=go
     depends_on:
         - mongodb
     volumes:
         - /etc/localtime:/etc/localtime
-    links:
-        - mongodb:mongodb
+    networks:
+        - net
     dns:
-        - 8.8.8.8
+        - 114.114.114.114
         - 4.2.2.1
         - 4.2.2.2
+        - 8.8.8.8
         - 1.1.1.1
-        - 114.114.114.114
   frontend:
     container_name: frontend
     image: ${frontendImage}
@@ -47,5 +52,10 @@ services:
         - backendURI=http://backend:50000
     volumes:
         - /etc/localtime:/etc/localtime
-    links:
-        - backend:backend
+    networks:
+        - net
+
+networks:
+  net:
+    driver: bridge
+    

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export backendImageTag="1.5.3"
+export backendImageTag="1.5.5"
 export frontendImageTag="1.5.1"
 export backendImage="ohyee/blotter:$backendImageTag"
 export frontendImage="ohyee/blotter_page:$frontendImageTag"
