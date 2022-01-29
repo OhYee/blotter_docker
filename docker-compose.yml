@@ -5,7 +5,7 @@ services:
     container_name: nginx
     image: nginx:1.19.9
     ports: 
-        - 50000:50000
+        - 50001:50001
         - 80:80
         - 443:443
     volumes: 
