@@ -1,7 +1,8 @@
 #!/bin/bash
 
-export backendImageTag="1.5.7"
-export frontendImageTag="1.5.1"
+export SHELL_FOLDER=$(cd "$(dirname "$(realpath "$0")")";pwd)
+export backendImageTag="1.6.0"
+export frontendImageTag="1.6.0"
 export backendImage="ohyee/blotter:$backendImageTag"
 export frontendImage="ohyee/blotter_page:$frontendImageTag"
 
@@ -68,6 +69,41 @@ func_stop() {
     docker-compose down
 }
 
+func_run_develop() {
+    echo "start Nginx and MongoDB"
+    export dockerHost=$(cat /etc/hosts | grep host.docker.internal | tr '\t' ' ' | tr -s " " | cut -f 1 -d " ")
+    export localHost=$(ip addr show eth0 | grep 'inet ' | cut -f 6 -d ' ' | cut -f 1 -d '/')
+
+    docker run \
+        -d \
+        --rm \
+        --name "nginx" \
+        -p 50001:50001 \
+        --add-host=backend:${localHost} \
+        --add-host=frontend:${localHost} \
+        -v ${SHELL_FOLDER}/nginx/conf.d:/etc/nginx/conf.d \
+        -v ${SHELL_FOLDER}/nginx/ssl:/etc/nginx/ssl \
+        -v /etc/localtime:/etc/localtime \
+        nginx:1.19.9 
+
+    docker run \
+        -d \
+        --rm \
+        --name "mongo" \
+        -p 27017:27017 \
+        -v ${SHELL_FOLDER}/data:/data/db \
+        -v /etc/localtime:/etc/localtime \
+        mongo:4.4.5
+
+    echo "go run main.go -address 0.0.0.0:50000"
+    echo "yarn dev"
+}
+
+func_stop_develop() {
+    docker stop nginx
+    docker stop mongo
+}
+
 func_help() {
     echo "Blotter Docker 环境"
     echo ""
@@ -103,5 +139,7 @@ case $1 in
     "start")    func_start          $@;;
     "stop")     func_stop           $@;;
     "init")     func_init           $@;;
+    "dev")      func_run_develop    $@;;
+    "stop_dev") func_stop_develop   $@;;
     *)          func_help           $@;;
 esac
