@@ -1,8 +1,8 @@
 #!/bin/bash
 
 export SHELL_FOLDER=$(cd "$(dirname "$(realpath "$0")")";pwd)
-export backendImageTag="1.7.0"
-export frontendImageTag="1.7.0"
+export backendImageTag="1.7.1"
+export frontendImageTag="1.7.1"
 export backendImage="ohyee/blotter:$backendImageTag"
 export frontendImage="ohyee/blotter_page:$frontendImageTag"
 
