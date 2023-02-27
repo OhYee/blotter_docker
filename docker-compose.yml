@@ -4,6 +4,7 @@ services:
   nginx:
     container_name: nginx
     image: nginx:1.19.9
+    restart: "always"
     ports: 
         - 50001:50001
         - 80:80
@@ -20,6 +21,7 @@ services:
   mongodb:
     container_name: mongodb
     image: mongo:4.4.5
+    restart: "always"
     volumes: 
         - ./data:/data/db
         - /etc/localtime:/etc/localtime
@@ -30,6 +32,7 @@ services:
   backend:
     container_name: backend
     image: ${backendImage}
+    restart: "always"
     environment: 
         - mongoURI=mongodb:27017
         - GODEBUG=netdns=go
@@ -48,6 +51,7 @@ services:
   frontend:
     container_name: frontend
     image: ${frontendImage}
+    restart: "always"
     environment:
         - backendURI=http://backend:50000
     volumes:
